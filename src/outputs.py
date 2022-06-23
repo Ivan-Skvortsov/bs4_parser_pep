@@ -8,21 +8,21 @@ from constants import BASE_DIR, DATETIME_FORMAT
 
 
 def control_output(results, cli_args):
+    output_mode = {
+        'pretty': pretty_output,
+        'file': file_output,
+        None: default_output
+    }
     output = cli_args.output
-    if output == 'pretty':
-        pretty_output(results)
-    elif output == 'file':
-        file_output(results, cli_args)
-    else:
-        default_output(results)
+    output_mode[output](results, cli_args)
 
 
-def default_output(results):
+def default_output(results, *args):
     for row in results:
         print(*row)
 
 
-def pretty_output(results):
+def pretty_output(results, *args):
     table = PrettyTable()
     table.field_names = results[0]
     table.align = 'l'

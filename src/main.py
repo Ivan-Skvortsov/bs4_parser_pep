@@ -120,14 +120,14 @@ def pep(session):
         dl_tag = find_tag(
             soup, 'dl', attrs={'class': 'rfc2822 field-list simple'}
         )
-        dt_tags = find_tag(dl_tag, 'dt', many=True)
-        pep_status = 'Unknown status'
-        for tag in dt_tags:
-            if tag.find(string=re.compile('Status')):
-                pep_status = (
-                    tag.find_next_sibling('dd').string or 'Unknown status'
-                )
-                break
+        try:
+            status_row = dl_tag.find(string='Status').parent
+            pep_status = status_row.find_next_sibling('dd').string
+        except Exception as e:
+            logging.warning(
+                f'Не найден статус PEP в карточке: {pep_url}. Код ошибки: {e}'
+            )
+            pep_status = 'Unknown status'
         # pep_status преобразовываем в str чтобы не упасть в бесконечную
         # рекурсиию при использовании prettytable
         pep_status = str(pep_status)
@@ -143,7 +143,8 @@ def pep(session):
             logging.warning(item[0])
             logging.warning(f'Статус в карточе: {item[1]}')
             logging.warning(f'Ожидаемые статусы: {item[2]}')
-    result = [('Статус', 'Количество')] + list(statuses_count.items())
+    result = [('Статус', 'Количество')]
+    result.extend(statuses_count.items())
     result.append(('Total', sum(statuses_count.values())))
     return result
 
