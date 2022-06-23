@@ -14,6 +14,7 @@ def get_response(session, url):
             f'Возникла ошибка при загрузке страницы {url}',
             stack_info=True
         )
+        raise
 
 
 def find_tag(soup, tag, attrs=None, many=False):

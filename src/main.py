@@ -16,8 +16,6 @@ from utils import get_response, find_tag
 def whats_new(session):
     whats_new_url = urljoin(MAIN_DOC_URL, 'whatsnew/')
     response = get_response(session, whats_new_url)
-    if response is None:
-        return
     soup = BeautifulSoup(response.text, features='lxml')
 
     main_div = find_tag(soup, 'section', attrs={'id': 'what-s-new-in-python'})
@@ -33,8 +31,6 @@ def whats_new(session):
         version_link = urljoin(whats_new_url, href)
 
         response = get_response(session, version_link)
-        if response is None:
-            continue
         soup = BeautifulSoup(response.text, features='lxml')
 
         h1 = find_tag(soup, 'h1')
